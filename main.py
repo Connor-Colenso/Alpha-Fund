@@ -118,22 +118,22 @@ if __name__ == '__main__':
     date_1 = '2022-02-24'
     date_2 = '2022-03-10'
 
-    asset1 = trade(ticker='GSK.L', quantity_purchased=6, date_purchased=date_1, asset_type='equity', leverage=1,
-                   short=False)
+    asset_1 = trade(ticker='GSK.L', quantity_purchased=6, date_purchased=date_1, asset_type='equity', leverage=1,
+                    short=False)
 
-    asset2 = trade(ticker='UPST', quantity_purchased=77, date_purchased=date_1, asset_type='equity', leverage=1,
-                   short=False)
+    asset_2 = trade(ticker='UPST', quantity_purchased=77, date_purchased=date_1, asset_type='equity', leverage=1,
+                    short=False)
 
-    asset3 = trade(ticker='HNT-USD', quantity_purchased=447, date_purchased=date_1, asset_type='equity',
-                   leverage=1, short=False)
+    asset_3 = trade(ticker='HNT-USD', quantity_purchased=447, date_purchased=date_1, asset_type='equity',
+                    leverage=1, short=False)
 
-    asset4 = trade(ticker='AUDUSD=X', quantity_purchased=13581, date_purchased=date_2, asset_type='FX',
-                   leverage=20, short=False)
+    asset_4 = trade(ticker='AUDUSD=X', quantity_purchased=13581, date_purchased=date_2, asset_type='FX',
+                    leverage=20, short=False)
 
-    asset5 = trade(ticker='AMD', quantity_purchased=94, date_purchased=date_2, asset_type='equity',
-                   leverage=1, short=False)
+    asset_5 = trade(ticker='AMD', quantity_purchased=94, date_purchased=date_2, asset_type='equity',
+                    leverage=1, short=False)
 
-    alpha_fund = portfolio(asset1, asset2, asset3, asset4, asset5)
+    alpha_fund = portfolio(asset_1, asset_2, asset_3, asset_4, asset_5)
 
     for asset in alpha_fund.asset_list:
         initial_cash -= asset.purchase_price * asset.quantity_purchased
