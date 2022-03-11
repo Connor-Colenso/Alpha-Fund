@@ -86,6 +86,12 @@ class trade:
         price_history = self.quantity_purchased * asset.history(self.ticker, start=self.date_purchased, end=date_sold)[
             'Close']
         plt.plot(price_history)
+        plt.xticks(rotation=45)
+        plt.subplots_adjust(bottom=0.21)
+        plt.subplots_adjust(left=0.15)
+        plt.xlabel('Date')
+        plt.ylabel('Price (USD $)')
+        plt.title('Alpha Fund Portfolio')
         plt.show()
 
 
