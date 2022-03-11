@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import yfinance as yf
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from utility.current_allocation import current_allocation
 from utility.liquidate import liquidate
@@ -65,7 +65,14 @@ class trade:
 
     def value(self):
 
+        date = datetime.today()
+        asset = yf.Ticker(self.ticker)
 
+        price_history = asset.history(self.ticker, start=date - timedelta(weeks=1), end=date)['Close']
+        price_change = price_history[0]
+
+        # Is short * quantity_purchased * price change * leverage = profit/loss.
+        return np.sign((not self.short) - 0.5) * self.quantity_purchased * price_change
 
     def graph(self):
         # TODO: Graph leverage properly.
@@ -86,17 +93,18 @@ class portfolio:
 
     def __init__(self, *assets):
         self.asset_list = [*assets]
+        self.cash = 0
 
     def add_trade(self, asset):
         self.asset_list.append(asset)
 
-    def pnl(self):
+    def value(self):
         total_value = 0
 
         for asset in self.asset_list:
-            total_value += asset.pnl()
+            total_value += asset.value()
 
-        return total_value
+        return self.cash + total_value
 
 
 def graph_portfolio():
@@ -123,16 +131,14 @@ def graph_portfolio():
 
 if __name__ == '__main__':
 
-    cash = 50000
-
     asset1 = trade(ticker='GSK.L', quantity_purchased=6, date_purchased='2022-02-24', asset_type='equity', leverage=1,
                    short=False)
 
     asset2 = trade(ticker='UPST', quantity_purchased=77, date_purchased='2022-02-24', asset_type='equity', leverage=1,
                    short=False)
 
-    asset3 = trade(ticker='HNT-USD', quantity_purchased=447, date_purchased='2022-02-24', asset_type='equity', leverage=1,
-                   short=False)
+    asset3 = trade(ticker='HNT-USD', quantity_purchased=447, date_purchased='2022-02-24', asset_type='equity',
+                   leverage=1, short=False)
 
     asset4 = trade(ticker='AUDUSD=X', quantity_purchased=13581, date_purchased='2022-03-11', asset_type='FX',
                    leverage=20, short=False)
@@ -141,7 +147,8 @@ if __name__ == '__main__':
                    leverage=1, short=False)
 
     alpha_fund = portfolio(asset1, asset2, asset3, asset4, asset5)
-    print(alpha_fund.pnl())
+    alpha_fund.cash = 50000
+    print(alpha_fund.value())
 
     # for i in alpha_fund.asset_list:
     #     print(i.pnl())
