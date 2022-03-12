@@ -5,7 +5,7 @@ import yfinance as yf
 from datetime import datetime, timedelta
 
 
-class trade:
+class Trade:
 
     def __init__(self, *, ticker, quantity, date_purchased, asset_type, date_sold=datetime.today(), leverage=1,
                  short=False, market='NYSE'):
@@ -92,7 +92,7 @@ class trade:
         plt.show()
 
 
-class portfolio:
+class Portfolio:
 
     def __init__(self, *, initial_cash, assets):
         self.asset_list = assets
@@ -154,16 +154,17 @@ class portfolio:
 
     def graph(self, benchmark, name):
 
-        portfolio_pct_return = (self.portfolio_valuation()['sum'][0] - self.portfolio_valuation()['sum'])/self.portfolio_valuation()['sum'][0]
+        portfolio_pct_return = (self.portfolio_valuation()['sum'][0] - self.portfolio_valuation()['sum']) / \
+                               self.portfolio_valuation()['sum'][0]
 
         purchase_list = [asset.date_purchased for asset in self.asset_list]
         oldest_purchase = min(purchase_list)
 
         asset = yf.Ticker(benchmark).history(start=oldest_purchase, end=today())['Close']
 
-        benchmark_pct_return = (asset[0] - asset)/asset[0]
+        benchmark_pct_return = (asset[0] - asset) / asset[0]
 
-        plt.plot(self.portfolio_valuation().index, portfolio_pct_return, lw=1, color='black',label='Portfolio Returns')
+        plt.plot(self.portfolio_valuation().index, portfolio_pct_return, lw=1, color='black', label='Portfolio Returns')
         plt.plot(benchmark_pct_return.index, benchmark_pct_return, lw=1, color='green', label='Benchmark Returns')
 
         plt.legend()
@@ -182,11 +183,11 @@ def today():
 
 
 if __name__ == '__main__':
+
     initial_cash = 100000
+    assets = []
 
     csv = pd.read_csv('Alpha Fund - Sheet1.csv')
-
-    assets = []
 
     for index, row in csv.iterrows():
 
@@ -195,7 +196,7 @@ if __name__ == '__main__':
         if np.isnan(date_sold):
             date_sold = today()
 
-        assets.append(trade(ticker=row['Ticker'],
+        assets.append(Trade(ticker=row['Ticker'],
                             quantity=row['Quantity'],
                             date_purchased=row['Purchase Date'],
                             date_sold=date_sold,
@@ -203,10 +204,6 @@ if __name__ == '__main__':
                             leverage=row['Leverage'],
                             short=row['Short']))
 
-    alpha_fund = portfolio(initial_cash=initial_cash, assets=assets)
-
-    # alpha_fund.graph(name='Alpha Fund Portfolio')
-    print(alpha_fund.portfolio_valuation())
-    print(alpha_fund.value())
+    alpha_fund = Portfolio(initial_cash=initial_cash, assets=assets)
 
     alpha_fund.graph(benchmark='^GSPC', name='Alpha Fund Portfolio')
