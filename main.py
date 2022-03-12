@@ -194,9 +194,6 @@ class Portfolio:
                 labels.append(column)
                 values.append(df[column][-1])
 
-        print(labels)
-        print(values)
-
         plt.pie(x=values, labels=labels, autopct='%1.1f%%')
         plt.title(name)
         plt.savefig(f'{name} - pie chart.png', dpi=300)
