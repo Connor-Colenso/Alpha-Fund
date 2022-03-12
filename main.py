@@ -6,6 +6,9 @@ from datetime import datetime, timedelta
 
 
 class Trade:
+    """
+    Individual trade that can be placed into the Portfolio object. Data is sourced using Yahoo Finance.
+    """
 
     def __init__(self, *, ticker, quantity, date_purchased, asset_type, date_sold=datetime.today(), leverage=1,
                  short=False, market='NYSE'):
@@ -72,15 +75,18 @@ class Trade:
             raise Exception('Short should be a boolean value.')
 
     def __repr__(self):
-
         return self.ticker
 
     def value(self):
-
+        """
+        :return: Current value of this asset of liquidated.
+        """
         return self.valuation_history[0]
 
     def graph(self):
-
+        """
+        :return: None
+        """
         price_history = self.quantity * self.valuation_history
         plt.plot(price_history, lw=1, color='black')
         plt.xticks(rotation=45)
@@ -93,12 +99,18 @@ class Trade:
 
 
 class Portfolio:
+    """
+    Portfolio object, can hold an arbitrary number of assets or pure cash.
+    """
 
     def __init__(self, *, initial_cash, assets):
         self.asset_list = assets
         self.initial_cash = initial_cash
 
     def cash_history(self):
+        """
+        :return: Cash in the portfolio over time.
+        """
 
         purchase_list = [asset.date_purchased for asset in self.asset_list]
         oldest_purchase = min(purchase_list)
@@ -128,16 +140,30 @@ class Portfolio:
         return cash_history['sum']
 
     def cash(self):
+        """
+        :return: Current cash held in the portfolio.
+        """
         return self.cash_history()[-1]
 
     def add_trade(self, asset):
+        """
+        :param asset: Asset in the form of a Trade object.
+        :return: None
+        """
         self.asset_list.append(asset)
 
     def value(self):
+        """
+        :return: Value of the portfolio at the present time.
+        """
 
         return self.portfolio_valuation()['sum'][-1]
 
     def portfolio_valuation(self):
+        """
+        :return: DataFrame containing the padded portfolios value over time. If a date has no data then it will check
+        backwards in time until itn finds valid data to substitute.
+        """
 
         df = pd.concat([asset.valuation_history for asset in self.asset_list] + [self.cash_history()], axis=1)
         df.columns = [asset.ticker for asset in self.asset_list] + ['CASH']
@@ -152,7 +178,12 @@ class Portfolio:
 
         return df[0:len(df) - row_to_drop].fillna(0)
 
-    def graph(self, benchmark, name):
+    def pct_return_graph(self, benchmark, name):
+        """
+        :param benchmark: Benchmark asset to compare against. Usually the FTSE100 or S&P500.
+        :param name: Name of the graph and image name.
+        :return: None
+        """
 
         portfolio_pct_return = (self.portfolio_valuation()['sum'][0] - self.portfolio_valuation()['sum']) / \
                                self.portfolio_valuation()['sum'][0]
@@ -181,6 +212,10 @@ class Portfolio:
         plt.show()
 
     def pie_chart(self, name):
+        """
+        :param name: Name of the chart and image name.
+        :return: None
+        """
 
         df = self.portfolio_valuation()
 
@@ -201,6 +236,9 @@ class Portfolio:
 
 
 def today():
+    """
+    :return: Datetime object of todays date. All other attributes are set to zero out.
+    """
     return datetime.today().replace(hour=0, minute=0, second=0, microsecond=0)
 
 
@@ -228,5 +266,5 @@ if __name__ == '__main__':
 
     alpha_fund = Portfolio(initial_cash=initial_cash, assets=assets)
 
-    alpha_fund.graph(benchmark='^FTSE', name='Alpha Fund Portfolio')
+    alpha_fund.pct_return_graph(benchmark='^FTSE', name='Alpha Fund Portfolio')
     alpha_fund.pie_chart(name='Alpha Fund Portfolio')
