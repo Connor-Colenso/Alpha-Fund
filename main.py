@@ -164,8 +164,11 @@ class Portfolio:
 
         benchmark_pct_return = (asset[0] - asset) / asset[0]
 
-        plt.plot(self.portfolio_valuation().index, portfolio_pct_return, lw=1, color='black', label='Portfolio Returns')
-        plt.plot(benchmark_pct_return.index, benchmark_pct_return, lw=1, color='green', label='Benchmark Returns')
+        plt.plot(self.portfolio_valuation().index, portfolio_pct_return, lw=1, color='black',
+                 label='Portfolio Returns')
+
+        plt.plot(benchmark_pct_return.index, benchmark_pct_return, lw=1, color='green',
+                 label=f'Benchmark Returns ({benchmark})')
 
         plt.legend()
         plt.xticks(rotation=45)
@@ -206,4 +209,4 @@ if __name__ == '__main__':
 
     alpha_fund = Portfolio(initial_cash=initial_cash, assets=assets)
 
-    alpha_fund.graph(benchmark='^GSPC', name='Alpha Fund Portfolio')
+    alpha_fund.graph(benchmark='^FTSE', name='Alpha Fund Portfolio')
