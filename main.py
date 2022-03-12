@@ -41,6 +41,9 @@ class Trade:
         if len(price_history) == 0:
             raise Exception('Price history is empty.')
 
+        if price_history.index[0] != self.date_purchased:
+            raise Exception(f'Invalid date range for {self.ticker} asset. Oldest date is {price_history.index[0]}.')
+
         self.purchase_price = price_history[0]
 
         # Fill in the date gaps for dates when market is closed with NaN and then backfill those gaps with future
@@ -178,6 +181,18 @@ class Portfolio:
 
         return df[0:len(df) - row_to_drop].fillna(0)
 
+    def abs_return_graph(self, name):
+
+        plt.plot(self.portfolio_valuation().index, self.portfolio_valuation()['sum'], lw=1, color='black')
+        plt.xticks(rotation=45)
+        plt.subplots_adjust(bottom=0.21)
+        plt.subplots_adjust(left=0.15)
+        plt.xlabel('Date')
+        plt.ylabel('Portfolio Value (USD $)')
+        plt.title(name)
+        plt.savefig(f'{name} - portfolio value.png', dpi=100)
+        plt.show()
+
     def pct_return_graph(self, benchmark, name):
         """
         :param benchmark: Benchmark asset to compare against. Usually the FTSE100 or S&P500.
@@ -185,15 +200,14 @@ class Portfolio:
         :return: None
         """
 
-        portfolio_pct_return = (self.portfolio_valuation()['sum'][0] - self.portfolio_valuation()['sum']) / \
-                               self.portfolio_valuation()['sum'][0]
+        portfolio_pct_return = self.portfolio_valuation()['sum'].pct_change()
 
         purchase_list = [asset.date_purchased for asset in self.asset_list]
         oldest_purchase = min(purchase_list)
 
         asset = yf.Ticker(benchmark).history(start=oldest_purchase, end=today())['Close']
 
-        benchmark_pct_return = (asset[0] - asset) / asset[0]
+        benchmark_pct_return = asset.pct_change()
 
         plt.plot(self.portfolio_valuation().index, portfolio_pct_return, lw=1, color='black',
                  label='Portfolio Returns')
@@ -229,7 +243,7 @@ class Portfolio:
                 labels.append(column)
                 values.append(df[column][-1])
 
-        plt.pie(x=values, labels=labels, autopct='%1.1f%%')
+        plt.pie(x=values, labels=labels, autopct='%1.1f%%', shadow=True)
         plt.title(name)
         plt.savefig(f'{name} - pie chart.png', dpi=100)
         plt.show()
@@ -268,3 +282,4 @@ if __name__ == '__main__':
 
     alpha_fund.pct_return_graph(benchmark='^FTSE', name='Alpha Fund Portfolio')
     alpha_fund.pie_chart(name='Alpha Fund Portfolio')
+    alpha_fund.abs_return_graph(name='Alpha Fund Portfolio')
