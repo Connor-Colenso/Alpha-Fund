@@ -161,7 +161,7 @@ class portfolio:
         plt.xlabel('Date')
         plt.ylabel('Price (USD $)')
         plt.title(name)
-        plt.savefig(f'{name}.png', dpi=1200)
+        plt.savefig(f'{name}.png', dpi=300)
         plt.show()
 
 
