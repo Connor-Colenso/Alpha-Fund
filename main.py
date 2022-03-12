@@ -177,7 +177,7 @@ class Portfolio:
         plt.xlabel('Date')
         plt.ylabel('Percentage Return (%)')
         plt.title(name)
-        plt.savefig(f'{name} - pct return.png', dpi=300)
+        plt.savefig(f'{name} - pct return.png', dpi=100)
         plt.show()
 
     def pie_chart(self, name):
@@ -196,7 +196,7 @@ class Portfolio:
 
         plt.pie(x=values, labels=labels, autopct='%1.1f%%')
         plt.title(name)
-        plt.savefig(f'{name} - pie chart.png', dpi=300)
+        plt.savefig(f'{name} - pie chart.png', dpi=100)
         plt.show()
 
 
