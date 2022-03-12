@@ -152,14 +152,26 @@ class portfolio:
 
         return df[0:len(df) - row_to_drop].fillna(0)
 
-    def graph(self, name):
+    def graph(self, benchmark, name):
 
-        plt.plot(self.portfolio_valuation().index, self.portfolio_valuation()['sum'], lw=1, color='black')
+        portfolio_pct_return = (self.portfolio_valuation()['sum'][0] - self.portfolio_valuation()['sum'])/self.portfolio_valuation()['sum'][0]
+
+        purchase_list = [asset.date_purchased for asset in self.asset_list]
+        oldest_purchase = min(purchase_list)
+
+        asset = yf.Ticker(benchmark).history(start=oldest_purchase, end=today())['Close']
+
+        benchmark_pct_return = (asset[0] - asset)/asset[0]
+
+        plt.plot(self.portfolio_valuation().index, portfolio_pct_return, lw=1, color='black',label='Portfolio Returns')
+        plt.plot(benchmark_pct_return.index, benchmark_pct_return, lw=1, color='green', label='Benchmark Returns')
+
+        plt.legend()
         plt.xticks(rotation=45)
         plt.subplots_adjust(bottom=0.21)
         plt.subplots_adjust(left=0.15)
         plt.xlabel('Date')
-        plt.ylabel('Price (USD $)')
+        plt.ylabel('Percentage Return (%)')
         plt.title(name)
         plt.savefig(f'{name}.png', dpi=300)
         plt.show()
@@ -196,3 +208,5 @@ if __name__ == '__main__':
     # alpha_fund.graph(name='Alpha Fund Portfolio')
     print(alpha_fund.portfolio_valuation())
     print(alpha_fund.value())
+
+    alpha_fund.graph(benchmark='^GSPC', name='Alpha Fund Portfolio')
