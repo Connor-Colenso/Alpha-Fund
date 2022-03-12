@@ -154,8 +154,7 @@ class Portfolio:
 
     def graph(self, benchmark, name):
 
-        portfolio_pct_return = (self.portfolio_valuation()['sum'][0] - self.portfolio_valuation()['sum']) / \
-                               self.portfolio_valuation()['sum'][0]
+        portfolio_pct_return = (self.portfolio_valuation()['sum'][0] - self.portfolio_valuation()['sum']) / self.portfolio_valuation()['sum'][0]
 
         purchase_list = [asset.date_purchased for asset in self.asset_list]
         oldest_purchase = min(purchase_list)
