@@ -187,7 +187,6 @@ class Portfolio:
         labels = []
         values = []
 
-
         for column in df:
 
             if column != 'sum':
@@ -198,7 +197,7 @@ class Portfolio:
         print(labels)
         print(values)
 
-        plt.pie(x=values, labels=labels)
+        plt.pie(x=values, labels=labels, autopct='%1.1f%%')
         plt.title(name)
         plt.savefig(f'{name} - pie chart.png', dpi=300)
         plt.show()
