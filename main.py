@@ -232,6 +232,5 @@ if __name__ == '__main__':
 
     alpha_fund = Portfolio(initial_cash=initial_cash, assets=assets)
 
-    # alpha_fund.graph(benchmark='^FTSE', name='Alpha Fund Portfolio')
+    alpha_fund.graph(benchmark='^FTSE', name='Alpha Fund Portfolio')
     alpha_fund.pie_chart(name='Alpha Fund Portfolio')
-    # print(alpha_fund.portfolio_valuation())
