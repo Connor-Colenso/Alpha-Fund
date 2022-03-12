@@ -154,7 +154,8 @@ class Portfolio:
 
     def graph(self, benchmark, name):
 
-        portfolio_pct_return = (self.portfolio_valuation()['sum'][0] - self.portfolio_valuation()['sum']) / self.portfolio_valuation()['sum'][0]
+        portfolio_pct_return = (self.portfolio_valuation()['sum'][0] - self.portfolio_valuation()['sum']) / \
+                               self.portfolio_valuation()['sum'][0]
 
         purchase_list = [asset.date_purchased for asset in self.asset_list]
         oldest_purchase = min(purchase_list)
@@ -176,7 +177,30 @@ class Portfolio:
         plt.xlabel('Date')
         plt.ylabel('Percentage Return (%)')
         plt.title(name)
-        plt.savefig(f'{name}.png', dpi=300)
+        plt.savefig(f'{name} - pct return.png', dpi=300)
+        plt.show()
+
+    def pie_chart(self, name):
+
+        df = self.portfolio_valuation()
+
+        labels = []
+        values = []
+
+
+        for column in df:
+
+            if column != 'sum':
+
+                labels.append(column)
+                values.append(df[column][-1])
+
+        print(labels)
+        print(values)
+
+        plt.pie(x=values, labels=labels)
+        plt.title(name)
+        plt.savefig(f'{name} - pie chart.png', dpi=300)
         plt.show()
 
 
@@ -208,4 +232,6 @@ if __name__ == '__main__':
 
     alpha_fund = Portfolio(initial_cash=initial_cash, assets=assets)
 
-    alpha_fund.graph(benchmark='^FTSE', name='Alpha Fund Portfolio')
+    # alpha_fund.graph(benchmark='^FTSE', name='Alpha Fund Portfolio')
+    alpha_fund.pie_chart(name='Alpha Fund Portfolio')
+    # print(alpha_fund.portfolio_valuation())
